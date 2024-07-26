@@ -1,0 +1,238 @@
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+// User class to represent a user
+class User {
+    private String username;
+    private String password;
+    private boolean isAdmin;
+
+    public User(String username, String password, boolean isAdmin) {
+        this.username = username;
+        this.password = password;
+        this.isAdmin = isAdmin;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+}
+
+// Flight class to represent a flight
+class Flight {
+    private String flightNumber;
+    private String origin;
+    private String destination;
+    private LocalDateTime departureTime;
+    private LocalDateTime arrivalTime;
+    private int availableSeats;
+
+    private Map<String, Integer> bookings; // Map to store bookings by username and number of seats
+
+    public Flight(String flightNumber, String origin, String destination, LocalDateTime departureTime, LocalDateTime arrivalTime, int availableSeats) {
+        this.flightNumber = flightNumber;
+        this.origin = origin;
+        this.destination = destination;
+        this.departureTime = departureTime;
+        this.arrivalTime = arrivalTime;
+        this.availableSeats = availableSeats;
+        this.bookings = new HashMap<>();
+    }
+
+    public String getFlightNumber() {
+        return flightNumber;
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public LocalDateTime getDepartureTime() {
+        return departureTime;
+    }
+
+    public LocalDateTime getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public int getAvailableSeats() {
+        return availableSeats;
+    }
+
+    public void bookSeats(String username, int numSeats) {
+        if (availableSeats >= numSeats) {
+            availableSeats -= numSeats;
+            bookings.put(username, numSeats); // Record the booking
+            System.out.println(numSeats + " seat(s) booked successfully!");
+        } else {
+            System.out.println("Sorry, only " + availableSeats + " seat(s) available on this flight.");
+        }
+    }
+
+    public Map<String, Integer> getBookings() {
+        return bookings;
+    }
+
+    public boolean isBooked() {
+        return !bookings.isEmpty();
+    }
+}
+
+// AirlineReservationSystem class to manage the application
+public class AirlineReservationSystem {
+    private List<User> users;
+    private List<Flight> flights;
+
+    public AirlineReservationSystem() {
+        users = new ArrayList<>();
+        flights = new ArrayList<>();
+        initializeData(); // Initialize dummy data
+    }
+
+    // Initialize dummy data (for demonstration purposes)
+    private void initializeData() {
+        // Adding some flights
+        flights.add(new Flight("FL123", "New York", "Los Angeles", LocalDateTime.of(2024, 8, 1, 8, 0), LocalDateTime.of(2024, 8, 1, 11, 0), 100));
+        flights.add(new Flight("FL456", "Chicago", "Dallas", LocalDateTime.of(2024, 8, 2, 9, 0), LocalDateTime.of(2024, 8, 2, 12, 0), 120));
+
+        // Adding a user (for demonstration)
+        users.add(new User("user1", "password1", false));
+        users.add(new User("admin", "adminpass", true));
+    }
+
+    // Method to handle user signup
+    public void signUp(String username, String password) {
+        // Check if username already exists
+        for (User user : users) {
+            if (user.getUsername().equals(username)) {
+                System.out.println("Username already exists. Please choose another.");
+                return;
+            }
+        }
+        // Add new user
+        users.add(new User(username, password, false)); // Assuming all new users are regular users
+        System.out.println("User signed up successfully!");
+    }
+
+    // Method to handle user login
+    public boolean login(String username, String password) {
+        for (User user : users) {
+            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+                System.out.println("Login successful!");
+                return true;
+            }
+        }
+        System.out.println("Invalid username or password.");
+        return false;
+    }
+
+    // Method to display available flights
+    public void displayFlights() {
+        System.out.println("Available Flights:");
+        for (Flight flight : flights) {
+            System.out.println("Flight Number: " + flight.getFlightNumber());
+            System.out.println("From: " + flight.getOrigin() + " To: " + flight.getDestination());
+            System.out.println("Departure Time: " + flight.getDepartureTime() + " Arrival Time: " + flight.getArrivalTime());
+            System.out.println("Available Seats: " + flight.getAvailableSeats());
+            System.out.println("-----------------------------------------");
+        }
+    }
+
+    // Method to allow a user to book a flight
+    public void bookFlight(String flightNumber, String username, int numSeats) {
+        for (Flight flight : flights) {
+            if (flight.getFlightNumber().equals(flightNumber)) {
+                flight.bookSeats(username, numSeats);
+                return;
+            }
+        }
+        System.out.println("Flight with number " + flightNumber + " not found.");
+    }
+
+    // Method to display flights where seats have been booked
+    public void displayBookedFlights() {
+        System.out.println("Booked Flights:");
+        for (Flight flight : flights) {
+            if (flight.isBooked()) {
+                System.out.println("Flight Number: " + flight.getFlightNumber());
+                System.out.println("Bookings:");
+                for (Map.Entry<String, Integer> entry : flight.getBookings().entrySet()) {
+                    System.out.println("User: " + entry.getKey() + ", Seats booked: " + entry.getValue());
+                }
+                System.out.println("-----------------------------------------");
+            }
+        }
+    }
+
+    // Method to gracefully exit the program
+    public void exit() {
+        System.out.println("Exiting the program. Goodbye!");
+        System.exit(0);
+    }
+
+    // Main method to run the application
+    public static void main(String[] args) {
+        AirlineReservationSystem system = new AirlineReservationSystem();
+        Scanner scanner = new Scanner(System.in);
+
+        // Example: Signup
+        System.out.println("Enter username for signup:");
+        String signupUsername = scanner.nextLine();
+        System.out.println("Enter password:");
+        String signupPassword = scanner.nextLine();
+        system.signUp(signupUsername, signupPassword);
+
+        // Example: Login
+        System.out.println("\nEnter username for login:");
+        String loginUsername = scanner.nextLine();
+        System.out.println("Enter password:");
+        String loginPassword = scanner.nextLine();
+        boolean isLoggedIn = system.login(loginUsername, loginPassword);
+
+        // Example: Display flights
+        if (isLoggedIn) {
+            System.out.println("\nDisplaying available flights:");
+            system.displayFlights();
+
+            // Example: Book a flight
+            System.out.println("\nEnter flight number to book:");
+            String flightNumber = scanner.nextLine();
+            System.out.println("Enter number of seats to book:");
+            int numSeats = scanner.nextInt();
+            scanner.nextLine(); // Consume newline left-over
+
+            system.bookFlight(flightNumber, loginUsername, numSeats);
+
+            // Example: Display booked flights (for admin)
+            if (system.users.stream().anyMatch(user -> user.getUsername().equals("admin"))) {
+                System.out.println("\nDisplaying booked flights:");
+                system.displayBookedFlights();
+            }
+        }
+
+      
+    }
+}
+
+
+
+
+
+
+
