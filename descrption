@@ -1,0 +1,8 @@
+
+Developed a robust Java application for managing airline reservations, demonstrating proficiency in Java programming and software development principles. Key features include:
+
+Implemented user authentication (sign-up and login) with password encryption for security.
+Designed classes to represent Users and Flights, with methods for booking flights, displaying available flights, and managing seat availability.
+Integrated functionality for booking multiple seats on flights and displaying booked flights with detailed booking information.
+Utilized Java's LocalDateTime for handling flight schedules and Scanner for user input handling.
+Demonstrated object-oriented programming principles such as encapsulation, inheritance, and polymorphism.
